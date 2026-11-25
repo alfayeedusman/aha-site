@@ -7,6 +7,10 @@ const tokens: Record<string, string> = {
   companyLegalName: config.companyLegalName,
   address: config.address,
   privacyEmail: config.privacyEmail,
+  websiteNote:
+    config.analytics.plausibleDomain || config.analytics.umami.websiteId
+      ? `This website uses no cookies. We count page visits with ${config.analytics.plausibleDomain ? 'Plausible Analytics' : 'Umami'}, a privacy-friendly tool that doesn't use cookies, doesn't track you across sites and doesn't collect personal data.`
+      : 'This website uses no cookies, analytics or tracking.',
 };
 const html = (await policy.compiledContent())
   .replace(/<!--[\s\S]*?-->/g, '')
@@ -34,8 +38,9 @@ const html = (await policy.compiledContent())
   <footer class="p-footer">
     <div class="row">
       <span class="copy">© {config.year} <a href={config.companyUrl}>{config.companyName}</a></span>
-      <span class="links"><a href={url('')}>Home</a><a href={url('#support')}>Support</a></span>
+      <span class="links"><a href={url('')}>Home</a><a href={url('#support')}>Support</a><a href={url('press')}>Press</a></span>
     </div>
+    <p class="tm">Apple, the Apple logo, iPhone and Face ID are trademarks of Apple Inc., registered in the U.S. and other countries and regions. App Store is a service mark of Apple Inc.</p>
   </footer>
 </Base>
 
@@ -83,6 +88,7 @@ const html = (await policy.compiledContent())
   .body :global(strong) { font-weight: 700; }
   .body :global(a) { text-decoration: underline; text-underline-offset: 2px; }
   .p-footer { border-top: 1px solid var(--line); }
+  .p-footer .tm { max-width: 860px; margin: 0 auto; padding: 0 24px 24px; font: 500 12px/1.5 var(--font-body); color: var(--muted); }
   .p-footer .row {
     max-width: 860px;
     margin: 0 auto;

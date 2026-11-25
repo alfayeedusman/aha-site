@@ -56,6 +56,8 @@ aha! is a one-time paid download. Payment is handled by Apple through the App St
 
 aha! contains no third-party analytics, advertising or tracking software. The only outside services involved are Apple's, as described above (App Store, optional online speech recognition, iCloud Backup if you use it).
 
+%%websiteNote%%
+
 ## 10. Your choices and deleting data
 
 You can edit or delete any memory, delete all private memories, or delete everything from Settings. Deleting the app removes all its data from your iPhone. Because we don't hold your data, there's nothing for us to delete on our side, but you're welcome to contact us with any request.

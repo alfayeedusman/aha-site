@@ -9,18 +9,23 @@ import Features from '../components/Features.astro';
 import PrivacyBand from '../components/PrivacyBand.astro';
 import ClosingCta from '../components/ClosingCta.astro';
 import Faq from '../components/Faq.astro';
+import Reviews from '../components/Reviews.astro';
+import StructuredData from '../components/StructuredData.astro';
 ---
 <Base
-  title="aha! - Where I Put It · One less thing to remember"
-  description="aha! remembers where you put things. Snap it, pin the spot, then just ask. Private on your iPhone."
+  title="aha! - Where I Put It · The iPhone app that remembers where you put things"
+  description="Never lose your passport, spare keys or documents again. aha! remembers where you put things: snap it, pin the spot, then just ask. Private, on your iPhone. One-time purchase."
   reveal
+  ogVideo="video/aha-launch-ad.mp4"
 >
+  <StructuredData slot="head" />
   <Header />
   <main id="main">
     <Hero />
     <LaunchVideo />
     <HowItWorks />
     <Features />
+    <Reviews />
     <PrivacyBand />
     <ClosingCta />
     <Faq />

@@ -1,0 +1,38 @@
+---
+// Real App Store reviews only (config.reviews). Renders nothing until there are some.
+import { config, appStoreHref } from '../config';
+const { reviews, rating } = config;
+const stars = (n: number) => '★★★★★'.slice(0, Math.round(n)).padEnd(5, '☆');
+---
+{reviews.length > 0 && (
+  <section id="reviews" class="reviews" aria-labelledby="reviews-title">
+    <div class="eyebrow">Reviews</div>
+    <h2 id="reviews-title" class="h2" data-reveal>People who stopped looking.</h2>
+    {rating && (
+      <a class="rating" href={appStoreHref}>
+        <span class="stars" aria-hidden="true">{stars(rating.value)}</span>
+        <span><b>{rating.value.toFixed(1)}</b> out of 5 · {rating.count} ratings on the App Store</span>
+      </a>
+    )}
+    <div class="grid">
+      {reviews.map((r) => (
+        <figure class="card" data-reveal>
+          <div class="stars" role="img" aria-label={`${r.stars} out of 5 stars`}>{stars(r.stars)}</div>
+          <blockquote>“{r.quote}”</blockquote>
+          <figcaption>{r.author} · App Store review</figcaption>
+        </figure>
+      ))}
+    </div>
+  </section>
+)}
+
+<style>
+  .reviews { max-width: var(--container); margin: 0 auto; padding: clamp(48px, 9vw, 72px) var(--gutter); }
+  .h2 { margin: 10px 0 20px; }
+  .rating { display: inline-flex; gap: 10px; align-items: center; margin-bottom: 28px; color: var(--ink); font: 600 16px var(--font-body); }
+  .stars { color: var(--tang); letter-spacing: 2px; font-size: 18px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 20px; }
+  .card { margin: 0; padding: 26px; border-radius: 28px; background: #fff; box-shadow: var(--shadow-card); display: flex; flex-direction: column; gap: 12px; }
+  blockquote { margin: 0; font: 600 18px/1.5 var(--font-body); }
+  figcaption { font: 600 14px var(--font-body); color: var(--muted); }
+</style>

@@ -13,8 +13,12 @@ interface Props {
   path?: string;
   noindex?: boolean;
   reveal?: boolean;
+  /** Path of a video to describe in Open Graph (shares on Facebook, Messenger, iMessage). */
+  ogVideo?: string;
 }
-const { title, description, path = '', noindex = false, reveal = false } = Astro.props;
+const { title, description, path = '', noindex = false, reveal = false, ogVideo } = Astro.props;
+const ogVideoUrl = ogVideo ? new URL(url(ogVideo), Astro.site).href : null;
+const { plausibleDomain, umami } = config.analytics;
 const canonical = new URL(url(path), Astro.site).href;
 const ogImage = new URL(url('og.png'), Astro.site).href;
 ---
@@ -26,7 +30,6 @@ const ogImage = new URL(url('og.png'), Astro.site).href;
     <title>{title}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex" />}
     <meta name="theme-color" content="#F5FAF8" />
     {config.appStoreId && <meta name="apple-itunes-app" content={`app-id=${config.appStoreId}`} />}
 
@@ -43,6 +46,18 @@ const ogImage = new URL(url('og.png'), Astro.site).href;
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="aha! - You put it somewhere safe. aha! remembers where." />
+    {ogVideoUrl && (
+      <>
+        <meta property="og:video" content={ogVideoUrl} />
+        <meta property="og:video:secure_url" content={ogVideoUrl} />
+        <meta property="og:video:type" content="video/mp4" />
+        <meta property="og:video:width" content="720" />
+        <meta property="og:video:height" content="1280" />
+      </>
+    )}
+    <meta property="og:locale" content="en_US" />
+    <meta name="robots" content={noindex ? 'noindex' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'} />
+    <link rel="alternate" type="text/plain" title="aha! summary for AI assistants" href={url('llms.txt')} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
@@ -55,6 +70,8 @@ const ogImage = new URL(url('og.png'), Astro.site).href;
         if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('reveal');
       </script>
     )}
+    {plausibleDomain && <script defer data-domain={plausibleDomain} src="https://plausible.io/js/script.outbound-links.js"></script>}
+    {!plausibleDomain && umami.websiteId && <script defer data-website-id={umami.websiteId} src={umami.src}></script>}
     <slot name="head" />
   </head>
   <body>

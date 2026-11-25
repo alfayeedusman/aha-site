@@ -1,9 +1,7 @@
 ---
-import { getImage } from 'astro:assets';
 import Icon from './Icon.astro';
 import { url } from '../config';
-import posterSrc from '../assets/aha-launch-ad-poster.jpg';
-const poster = await getImage({ src: posterSrc, format: 'webp', width: 720 });
+import { video } from '../data/site';
 ---
 <section id="watch" class="watch" aria-labelledby="watch-title">
   <div class="panel on-dark">
@@ -14,12 +12,16 @@ const poster = await getImage({ src: posterSrc, format: 'webp', width: 720 });
       <button class="btn" type="button" data-video-sound-play>
         <Icon name="volume_up" size={20} />Watch with sound
       </button>
+      <details class="transcript">
+        <summary>Read the transcript</summary>
+        <ol>{video.transcript.map((line) => <li>{line}</li>)}</ol>
+      </details>
     </div>
     <div class="frame" data-reveal>
       <video
         data-launch-video
-        src={url('video/aha-launch-ad.mp4')}
-        poster={poster.src}
+        src={url(video.path)}
+        poster={url(video.poster)}
         width="720"
         height="1280"
         muted
@@ -129,6 +131,16 @@ const poster = await getImage({ src: posterSrc, format: 'webp', width: 720 });
     transition: transform 0.2s var(--ease-reveal);
   }
   .btn:hover { transform: translateY(-2px); }
+  .transcript { color: var(--mint-body); font: 500 15px/1.5 var(--font-body); }
+  .transcript summary {
+    cursor: pointer;
+    font: 700 15px var(--font-body);
+    color: var(--cream);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    width: fit-content;
+  }
+  .transcript ol { margin: 12px 0 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
   .frame {
     position: relative;
     justify-self: center;

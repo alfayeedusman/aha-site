@@ -1,0 +1,81 @@
+---
+// schema.org JSON-LD for search engines and AI assistants. Built from config + data/site.ts.
+import { config, url } from '../config';
+import { summary, features, faqs, video, screenshots } from '../data/site';
+const site = Astro.site!;
+const abs = (p: string) => new URL(url(p), site).href;
+const home = abs('');
+const store = config.appStoreUrl || home;
+
+const app: Record<string, unknown> = {
+  '@type': 'MobileApplication',
+  '@id': `${home}#app`,
+  name: config.appName,
+  alternateName: ['aha!', 'aha Where I Put It'],
+  description: summary,
+  url: home,
+  downloadUrl: store,
+  installUrl: store,
+  image: abs('icon/AppIcon-1024.png'),
+  screenshot: screenshots.map(([f]) => abs(`press/screens/${f}.png`)),
+  operatingSystem: `iOS ${config.minIos}.0 or later`,
+  applicationCategory: 'ProductivityApplication',
+  applicationSubCategory: 'Lifestyle',
+  inLanguage: 'en',
+  isAccessibleForFree: false,
+  featureList: features.map(([t, d]) => `${t}: ${d}`),
+  offers: {
+    '@type': 'Offer',
+    price: config.price.amount,
+    priceCurrency: config.price.currency,
+    availability: 'https://schema.org/InStock',
+    url: store,
+    category: 'One-time purchase',
+  },
+  publisher: { '@id': `${home}#org` },
+  author: { '@id': `${home}#org` },
+};
+if (config.rating) {
+  app.aggregateRating = { '@type': 'AggregateRating', ratingValue: config.rating.value, ratingCount: config.rating.count, bestRating: 5 };
+}
+
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': `${home}#org`,
+      name: config.companyName,
+      url: config.companyUrl,
+      email: config.supportEmail,
+      address: { '@type': 'PostalAddress', streetAddress: 'Gusa', addressLocality: 'Cagayan de Oro City', postalCode: '9000', addressRegion: 'Misamis Oriental', addressCountry: 'PH' },
+      contactPoint: { '@type': 'ContactPoint', contactType: 'customer support', email: config.supportEmail, availableLanguage: 'English' },
+    },
+    { '@type': 'WebSite', '@id': `${home}#website`, url: home, name: config.appName, inLanguage: 'en', publisher: { '@id': `${home}#org` } },
+    {
+      '@type': 'WebPage', '@id': `${home}#webpage`, url: home, name: `${config.appName} · One less thing to remember`,
+      isPartOf: { '@id': `${home}#website` }, about: { '@id': `${home}#app` }, primaryImageOfPage: abs('og.png'), inLanguage: 'en',
+    },
+    app,
+    {
+      '@type': 'VideoObject',
+      name: video.title,
+      description: video.description,
+      thumbnailUrl: abs(video.poster),
+      contentUrl: abs(video.path),
+      uploadDate: video.uploadDate,
+      duration: video.duration,
+      transcript: video.transcript.join(' '),
+      inLanguage: 'en',
+      publisher: { '@id': `${home}#org` },
+    },
+    {
+      '@type': 'FAQPage',
+      '@id': `${home}#faq`,
+      mainEntity: faqs.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+    },
+  ],
+};
+const json = JSON.stringify(graph).replace(/</g, '\\u003c');
+---
+<script type="application/ld+json" set:html={json} />

@@ -1,0 +1,136 @@
+---
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import { config, url } from '../config';
+import { summary, longDescription, keyFacts, features, screenshots, video } from '../data/site';
+
+const images = import.meta.glob<{ default: ImageMetadata }>('../assets/screens/0*.png', { eager: true });
+const shot = (f: string) => images[`../assets/screens/${f}.png`].default;
+const swatches = [
+  ['Teal', 'oklch(0.5 0.1 185)'],
+  ['Mint', 'oklch(0.93 0.045 170)'],
+  ['Tangerine', 'oklch(0.76 0.16 55)'],
+  ['Ink', 'oklch(0.25 0.03 210)'],
+  ['Off-white', 'oklch(0.982 0.006 165)'],
+];
+---
+<Base
+  title="Press kit · aha! - Where I Put It"
+  description="Press kit for aha! - Where I Put It: app description, key facts, app icon, screenshots and the launch video."
+  path="press"
+>
+  <header class="p-header">
+    <div class="row">
+      <a href={url('')} class="brand"><img src={url('icon/AppIcon-120.png')} alt="" width="34" height="34" /><span>aha!</span></a>
+      <a href={url('')} class="back">← Back to home</a>
+    </div>
+  </header>
+  <main id="main" class="press">
+    <div class="title">
+      <h1>Press kit</h1>
+      <p class="lead">{summary}</p>
+      <div class="actions">
+        <a class="btn" href={url('press/aha-press-kit.zip')} download>Download everything (.zip)</a>
+        <a class="btn ghost" href={`mailto:${config.supportEmail}?subject=Press%20enquiry`}>Press contact: {config.supportEmail}</a>
+      </div>
+    </div>
+
+    <section>
+      <h2>About aha!</h2>
+      {longDescription.map((p) => <p>{p}</p>)}
+    </section>
+
+    <section>
+      <h2>Key facts</h2>
+      <dl class="facts">
+        {keyFacts.map(([k, v]) => (<><dt>{k}</dt><dd>{v}</dd></>))}
+      </dl>
+    </section>
+
+    <section>
+      <h2>Features</h2>
+      <ul class="feat">{features.map(([t, d]) => <li><b>{t}.</b> {d}</li>)}</ul>
+    </section>
+
+    <section>
+      <h2>App icon</h2>
+      <div class="icon-row">
+        <img src={url('icon/AppIcon-180.png')} alt="aha! app icon" width="120" height="120" loading="lazy" />
+        <p>Use the icon as is: don't recolour, stretch or add effects. iOS applies the rounded mask, so the file is square. <a href={url('press/aha-app-icon-1024.png')} download>Download PNG (1024 × 1024)</a></p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Screenshots</h2>
+      <p>App Store screenshots, 1320 × 2868 PNG. Click one to open the full-size file.</p>
+      <div class="shots">
+        {screenshots.map(([f, label]) => (
+          <a href={url(`press/screens/${f}.png`)} download>
+            <Picture src={shot(f)} formats={['avif', 'webp']} fallbackFormat="webp" widths={[200, 400]} sizes="200px" alt={label} loading="lazy" />
+            <span>{label}</span>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <section>
+      <h2>Launch video</h2>
+      <p>54 seconds, vertical 9:16, with captions. <a href={url(video.path)} download>Download MP4</a></p>
+    </section>
+
+    <section>
+      <h2>Brand</h2>
+      <p>Write the name as <b>aha!</b> (lowercase, with the exclamation mark), or <b>aha! - Where I Put It</b> in full. Headlines use Bricolage Grotesque, body text uses Figtree.</p>
+      <ul class="swatches">
+        {swatches.map(([n, c]) => <li><span style={`background:${c}`}></span>{n}<code>{c}</code></li>)}
+      </ul>
+    </section>
+  </main>
+  <footer class="p-footer">
+    <div class="row">
+      <span>© {config.year} <a href={config.companyUrl}>{config.companyName}</a></span>
+      <span class="links"><a href={url('')}>Home</a><a href={url('privacy')}>Privacy</a><a href={url('#support')}>Support</a></span>
+    </div>
+    <p class="tm">Apple, the Apple logo, iPhone and Face ID are trademarks of Apple Inc., registered in the U.S. and other countries and regions. App Store is a service mark of Apple Inc.</p>
+  </footer>
+</Base>
+
+<style>
+  .p-header { border-bottom: 1px solid var(--line); }
+  .row { max-width: 960px; margin: 0 auto; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); }
+  .brand:hover { color: var(--ink); }
+  .brand img { width: 34px; height: 34px; border-radius: 8px; }
+  .brand span { font: 800 22px var(--font-head); letter-spacing: -0.02em; }
+  .back { font: 600 14px var(--font-body); }
+  .press { max-width: 960px; margin: 0 auto; padding: 56px 24px 80px; display: flex; flex-direction: column; gap: 44px; font: 500 17px/1.65 var(--font-body); }
+  .title { display: flex; flex-direction: column; gap: 16px; }
+  h1 { margin: 0; font: 800 clamp(38px, 5vw, 56px) / 1.02 var(--font-head); letter-spacing: -0.035em; }
+  .lead { margin: 0; font-size: 19px; color: var(--muted); max-width: 720px; }
+  section { display: flex; flex-direction: column; gap: 12px; }
+  h2 { margin: 0; font: 800 28px/1.15 var(--font-head); }
+  p { margin: 0; }
+  section a, .lead a { text-decoration: underline; text-underline-offset: 3px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn { height: 48px; padding: 0 20px; border-radius: 24px; display: inline-flex; align-items: center; background: var(--teal); color: #fff; font: 800 15px var(--font-body); }
+  .btn:hover { background: var(--teal-hover); color: #fff; }
+  .btn.ghost { background: var(--mint); color: var(--teal-deep); }
+  .facts { margin: 0; display: grid; grid-template-columns: minmax(120px, 180px) 1fr; gap: 10px 20px; }
+  dt { font-weight: 800; }
+  dd { margin: 0; color: var(--muted); }
+  .feat { margin: 0; padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+  .icon-row { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+  .icon-row img { border-radius: 26px; box-shadow: 0 12px 28px oklch(0.4 0.08 185 / 0.25); }
+  .icon-row p { flex: 1 1 260px; }
+  .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+  .shots a { display: flex; flex-direction: column; gap: 8px; color: var(--ink); text-decoration: none; font: 600 14px/1.3 var(--font-body); }
+  .shots :global(img) { width: 100%; height: auto; border-radius: 16px; box-shadow: var(--shadow-card); }
+  .swatches { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 14px; }
+  .swatches li { display: flex; flex-direction: column; gap: 6px; font: 700 14px var(--font-body); }
+  .swatches span { width: 96px; height: 60px; border-radius: 16px; border: 1px solid var(--line); }
+  code { font: 500 12px ui-monospace, monospace; color: var(--muted); }
+  .p-footer { border-top: 1px solid var(--line); font: 500 13px var(--font-body); color: var(--muted); }
+  .links { display: flex; gap: 18px; }
+  .tm { max-width: 960px; margin: 0 auto; padding: 0 24px 24px; font: 500 12px/1.5 var(--font-body); color: var(--muted); }
+  @media (max-width: 520px) { .facts { grid-template-columns: 1fr; gap: 2px; } dd { margin-bottom: 10px; } }
+</style>

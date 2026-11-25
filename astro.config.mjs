@@ -16,6 +16,7 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [
     sitemap({
+      lastmod: new Date(),
       filter: (page) => !/\/(support|404)(\.html)?$/.test(page),
     }),
   ],

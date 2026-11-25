@@ -1,14 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import { config } from '../config';
-const faqs = [
-  ['Do I need an account?', "No. Open the app and start remembering. There's nothing to sign up for."],
-  ['What happens if I lose my phone?', 'aha! has no cloud, so make a backup from Settings → Backup & restore. It creates a password-protected .aha file you can keep in Files, iCloud Drive or anywhere you like, and restore on a new iPhone.'],
-  ['I forgot my backup password.', "We never see or store it, so it can't be reset. Create a new backup from the app with a password you'll remember."],
-  ['Is voice processed on my phone?', 'Yes, when your iPhone supports on-device recognition. If it doesn\'t, aha! only uses Apple\'s online speech service if you turn on "Online voice fallback" in Settings. Otherwise you can type.'],
-  ['How do I open Secret Vault?', "Go to the Memories tab and tap Secret Vault. It opens with Face ID, or your iPhone passcode if Face ID isn't available."],
-  ['How do I get a refund?', 'Purchases are handled by Apple. Request a refund at reportaproblem.apple.com.'],
-];
+import { faqs } from '../data/site';
 ---
 <section id="support" class="support" aria-labelledby="support-title">
   <div class="inner">

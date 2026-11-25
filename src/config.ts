@@ -7,6 +7,18 @@ export const config = {
   appStoreUrl: 'https://apps.apple.com/app/id6839034222',
   /** Numeric App Store id for the Smart App Banner (empty until the app is live). */
   appStoreId: '6839034222',
+  /** One-time price shown on the site (App Store tier). Apple sets local prices per country. */
+  price: { amount: '9.99', currency: 'USD', display: 'US$9.99' },
+  minIos: '16',
+  /** Real App Store reviews only, copied with the reviewer's display name. The section stays hidden while empty. */
+  reviews: [] as { quote: string; author: string; stars: number }[],
+  /** App Store average rating, e.g. { value: 4.8, count: 120 }. null hides it. */
+  rating: null as null | { value: number; count: number },
+  /**
+   * Cookie-free visit counting. Fill ONE: plausibleDomain (e.g. 'aha.yowtech.io') or umami
+   * { websiteId, src }. Empty = no analytics script at all.
+   */
+  analytics: { plausibleDomain: '', umami: { websiteId: '', src: '' } },
   companyName: 'Yowtech IT Solutions',
   companyUrl: 'https://yowtech.io',
   companyLegalName: 'Yowtech IT Solutions',
