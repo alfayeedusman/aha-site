@@ -1,0 +1,20 @@
+---
+// /support (support.html, linked from the iOS app) → the Support section on the home page.
+import { url } from '../config';
+const target = url('#support');
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Support · aha! — Where I Put It</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={new URL(target, Astro.site).href} />
+    <meta http-equiv="refresh" content={`0; url=${target}`} />
+    <script is:inline define:vars={{ target }}>location.replace(target);</script>
+  </head>
+  <body style="font-family:system-ui,sans-serif;padding:24px">
+    <p><a href={target}>Go to aha! support</a></p>
+  </body>
+</html>

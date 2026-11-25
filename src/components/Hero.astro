@@ -1,0 +1,148 @@
+---
+import { Picture } from 'astro:assets';
+import AppStoreBadge from './AppStoreBadge.astro';
+import Icon from './Icon.astro';
+import ask from '../assets/screens/02-ask.png';
+---
+<section id="top" class="hero">
+  <div class="copy">
+    <div class="badge-new"><span class="dot"></span>New for iPhone</div>
+    <h1>You put it somewhere safe. <span>aha! remembers where.</span></h1>
+    <p class="lead">Snap it, pin the exact spot, then just ask. Passports, spare keys, birth certificates, holiday lights. One less thing to remember.</p>
+    <div id="download" class="cta">
+      <AppStoreBadge />
+      <div class="cta-note"><b>For iPhone.</b><br />No account. No ads.</div>
+    </div>
+  </div>
+  <div class="visual">
+    <div class="circle" aria-hidden="true"></div>
+    <div class="phone">
+      <div class="phone-float">
+        <Picture
+          src={ask}
+          formats={['avif', 'webp']} fallbackFormat="webp"
+          widths={[380, 760]}
+          sizes="(max-width: 420px) calc(100vw - 36px), 380px"
+          alt="aha! answering where's my passport with a photo and a pin"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    </div>
+    <div class="chip-wrap chip-pin" aria-hidden="true">
+      <div class="chip"><span class="pin"></span>Top cubby · Hallway</div>
+    </div>
+    <div class="chip-wrap chip-found" aria-hidden="true">
+      <div class="chip"><Icon name="celebration" size={20} />Found it!</div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: clamp(40px, 8vw, 64px) var(--gutter) 40px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr));
+    gap: 48px;
+    align-items: center;
+  }
+  .copy { display: flex; flex-direction: column; gap: 24px; }
+  .badge-new {
+    animation: aha-rise 0.7s 0.05s both;
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 14px;
+    border-radius: 18px;
+    background: var(--tang-soft);
+    color: var(--tang-text);
+    font: 800 13px var(--font-body);
+    letter-spacing: 0.02em;
+  }
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--tang);
+    animation: aha-dot 1.8s infinite;
+  }
+  h1 {
+    animation: aha-rise 0.8s 0.15s both;
+    margin: 0;
+    font: 800 clamp(44px, 6.4vw, 82px) / 0.98 var(--font-head);
+    letter-spacing: -0.04em;
+    text-wrap: balance;
+  }
+  h1 span { color: var(--teal); }
+  .lead {
+    animation: aha-rise 0.8s 0.28s both;
+    margin: 0;
+    font: 500 clamp(18px, 1.8vw, 21px) / 1.5 var(--font-body);
+    color: var(--muted);
+    max-width: 520px;
+    text-wrap: pretty;
+  }
+  .cta {
+    animation: aha-rise 0.8s 0.4s both;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: center;
+    scroll-margin-top: 90px;
+  }
+  .cta-note { font: 600 15px/1.4 var(--font-body); color: var(--muted); }
+  .cta-note b { color: var(--ink); }
+  .visual { display: flex; justify-content: center; position: relative; }
+  .circle {
+    position: absolute;
+    inset: 8% 6%;
+    border-radius: 50%;
+    background: var(--mint);
+    animation: aha-breathe 6s ease-in-out infinite;
+  }
+  .phone { position: relative; width: min(100%, 380px); animation: aha-rise 0.9s 0.3s both; }
+  .phone-float { animation: aha-float 7s 1.2s ease-in-out infinite; }
+  .phone :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 36px;
+    box-shadow: var(--shadow-phone);
+  }
+  .chip-wrap { position: absolute; }
+  .chip {
+    padding: 11px 16px 11px 12px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: var(--shadow-chip);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font: 700 15px var(--font-body);
+    white-space: nowrap;
+  }
+  .chip-pin { left: 0; bottom: 16%; animation: aha-pop 0.6s 1s both; }
+  .chip-pin .chip { animation: aha-float 5s 1.6s ease-in-out infinite; }
+  .pin {
+    width: 26px;
+    height: 26px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    background: var(--tang);
+    border: 3px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  }
+  .chip-found { right: 0; top: 10%; animation: aha-pop 0.6s 1.4s both; }
+  .chip-found .chip {
+    padding: 11px 18px;
+    background: var(--tang);
+    color: var(--tang-ink);
+    box-shadow: 0 14px 30px oklch(0.76 0.16 55 / 0.4);
+    gap: 6px;
+    font: 800 16px var(--font-body);
+    animation: aha-float 4.5s 2s ease-in-out infinite;
+  }
+</style>

@@ -1,0 +1,22 @@
+@keyframes aha-rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+@keyframes aha-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+@keyframes aha-breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+@keyframes aha-pop { 0% { transform: scale(0.4); opacity: 0; } 70% { transform: scale(1.08); opacity: 1; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes aha-dot { 0% { box-shadow: 0 0 0 0 oklch(0.76 0.16 55 / 0.6); } 100% { box-shadow: 0 0 0 10px oklch(0.76 0.16 55 / 0); } }
+@keyframes aha-drop { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
+@keyframes aha-marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* Scroll reveal: only armed when JS runs and motion is allowed (html.reveal). */
+.reveal [data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.7s var(--ease-reveal), transform 0.7s var(--ease-reveal);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal [data-reveal].is-visible { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  html { scroll-behavior: auto; }
+  .reveal [data-reveal] { opacity: 1; transform: none; }
+}

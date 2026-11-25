@@ -1,0 +1,98 @@
+---
+import Base from '../layouts/Base.astro';
+import * as policy from '../content/privacy.md';
+import { config, url } from '../config';
+
+const tokens: Record<string, string> = {
+  companyLegalName: config.companyLegalName,
+  address: config.address,
+  privacyEmail: config.privacyEmail,
+};
+const html = (await policy.compiledContent())
+  .replace(/<!--[\s\S]*?-->/g, '')
+  .replace(/(?:%25|%){2}(\w+)(?:%25|%){2}/g, (m, k: string) => tokens[k] ?? m);
+---
+<Base
+  title="Privacy Policy · aha! — Where I Put It"
+  description="aha! does not collect, sell or share your data. No account, no server: your memories and photos stay on your iPhone."
+  path="privacy"
+>
+  <header class="p-header">
+    <div class="row">
+      <a href={url('')} class="brand"><img src={url('icon/AppIcon-120.png')} alt="" width="34" height="34" /><span>aha!</span></a>
+      <a href={url('')} class="back">← Back to home</a>
+    </div>
+  </header>
+  <main id="main" class="policy">
+    <div class="title">
+      <h1>Privacy Policy</h1>
+      <div class="meta">Effective {config.policyEffective} · Applies to aha! — Where I Put It for iPhone</div>
+    </div>
+    <div class="summary">The short version: aha! does not collect, sell or share your data. There's no account and no server. Your memories, photos and settings are stored on your iPhone, and backups are files you create and keep.</div>
+    <div class="body" set:html={html} />
+  </main>
+  <footer class="p-footer">
+    <div class="row">
+      <span>© {config.year} {config.companyName}</span>
+      <span class="links"><a href={url('')}>Home</a><a href={url('#support')}>Support</a></span>
+    </div>
+  </footer>
+</Base>
+
+<style>
+  .p-header { border-bottom: 1px solid var(--line); }
+  .p-header .row {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); }
+  .brand:hover { color: var(--ink); }
+  .brand img { width: 34px; height: 34px; border-radius: 8px; }
+  .brand span { font: 800 22px var(--font-head); letter-spacing: -0.02em; }
+  .back { font: 600 14px var(--font-body); }
+  .policy {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    font: 500 17px/1.65 var(--font-body);
+  }
+  .title { display: flex; flex-direction: column; gap: 10px; }
+  h1 { margin: 0; font: 800 clamp(38px, 5vw, 56px) / 1.02 var(--font-head); letter-spacing: -0.035em; }
+  .meta { font: 600 14px var(--font-body); color: var(--muted); }
+  .summary {
+    padding: 20px 22px;
+    border-radius: 22px;
+    background: var(--mint);
+    color: var(--teal-deep);
+    font: 600 16px/1.55 var(--font-body);
+  }
+  /* Markdown body: each H2 starts a section (10px inside, 30px between sections). */
+  .body { display: flex; flex-direction: column; gap: 10px; }
+  .body :global(h2) { margin: 20px 0 0; font: 800 26px/1.15 var(--font-head); }
+  .body :global(h2:first-child) { margin-top: 0; }
+  .body :global(p), .body :global(ul) { margin: 0; }
+  .body :global(ul) { padding-left: 22px; display: flex; flex-direction: column; gap: 6px; }
+  .body :global(strong) { font-weight: 700; }
+  .body :global(a) { text-decoration: underline; text-underline-offset: 2px; }
+  .p-footer { border-top: 1px solid var(--line); }
+  .p-footer .row {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: space-between;
+    font: 500 13px var(--font-body);
+    color: var(--muted);
+  }
+  .links { display: flex; gap: 18px; }
+</style>

@@ -1,0 +1,68 @@
+name: Deploy
+
+# Every push to main builds the site twice:
+#  1. GitHub Pages at https://alfayeedusman.github.io/aha-site/ (the URLs the iOS app links to)
+#  2. The "hostinger" branch: a ready-to-serve build for your domain root. Hostinger's Git
+#     deployment pulls this branch into public_html (Hostinger doesn't run npm builds itself).
+# Set the repository variable SITE_URL (Settings → Secrets and variables → Actions → Variables)
+# to your domain, e.g. https://yourdomain.com, so canonical/OG/sitemap URLs are right.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  github-pages:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          SITE_URL: https://alfayeedusman.github.io
+          BASE_PATH: /aha-site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+      - id: deployment
+        uses: actions/deploy-pages@v4
+
+  hostinger:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+        env:
+          SITE_URL: ${{ vars.SITE_URL || 'https://yourdomain.com' }}
+          BASE_PATH: /
+      - name: Publish dist/ to the hostinger branch
+        working-directory: dist
+        run: |
+          git init -q -b hostinger
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898283+github-actions[bot]@users.noreply.github.com" \
+            commit -q -m "Build of ${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" hostinger

@@ -1,0 +1,59 @@
+---
+import { Picture } from 'astro:assets';
+import pin from '../assets/screens/03-pin.png';
+import ask from '../assets/screens/02-ask.png';
+import found from '../assets/screens/04-found.png';
+const steps = [
+  { img: pin, alt: 'Pinning the exact spot on a photo', label: '1 · Remember', title: 'Snap, say or type it.', text: 'Take a photo and drop a pin, or just say "the spare key is in the junk drawer."' },
+  { img: ask, alt: "Searching where's my passport", label: '2 · Ask', title: '"Where\'s my passport?"', text: 'Typos and nicknames are fine. aha! answers with the photo and the pin, and never guesses.' },
+  { img: found, alt: 'Found it celebration', label: '3 · Find', title: 'Found it!', text: 'Right where you left it. Moved it? Update in a tap and aha! keeps the trail.' },
+];
+---
+<section id="how" class="how" aria-labelledby="how-title">
+  <div class="eyebrow">How it works</div>
+  <h2 id="how-title" class="h2" data-reveal>Five seconds now saves twenty minutes later.</h2>
+  <div class="grid">
+    {steps.map((s) => (
+      <article class="card" data-reveal>
+        <Picture src={s.img} formats={['avif', 'webp']} fallbackFormat="webp" widths={[360, 720]} sizes="(max-width: 420px) calc(100vw - 68px), 360px" alt={s.alt} />
+        <div class="body">
+          <div class="label">{s.label}</div>
+          <h3>{s.title}</h3>
+          <p>{s.text}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>
+
+<style>
+  .how {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: clamp(40px, 8vw, 64px) var(--gutter);
+    scroll-margin-top: 70px;
+  }
+  .h2 { margin: 10px 0 36px; max-width: 760px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 24px; }
+  .card {
+    background: #fff;
+    border-radius: 32px;
+    padding: 16px 16px 26px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: var(--shadow-card);
+  }
+  .card :global(img) {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 22px;
+  }
+  .body { padding: 0 10px; }
+  .label { font: 800 15px var(--font-body); color: var(--tang-text); }
+  h3 { margin: 4px 0 0; font: 800 26px/1.15 var(--font-head); }
+  p { margin: 8px 0 0; font: 500 16px/1.5 var(--font-body); color: var(--muted); }
+</style>

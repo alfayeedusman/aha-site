@@ -1,0 +1,39 @@
+---
+import { config, url } from '../config';
+---
+<footer class="site-footer on-dark">
+  <div class="inner">
+    <div class="brand">
+      <img src={url('icon/AppIcon-80.png')} alt="" width="32" height="32" loading="lazy" />
+      <span class="name">aha!</span>
+      <span class="tag">One less thing to remember.</span>
+    </div>
+    <nav aria-label="Footer">
+      <a href={url('privacy')}>Privacy Policy</a>
+      <a href={url('#support')}>Support</a>
+      <a href={`mailto:${config.helloEmail}`}>Contact</a>
+    </nav>
+    <p class="legal">© {config.year} {config.companyName}. Apple, the Apple logo, iPhone and Face ID are trademarks of Apple Inc. App Store is a service mark of Apple Inc.</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer { background: var(--ink); color: var(--footer-text); }
+  .inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 36px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand img { width: 32px; height: 32px; border-radius: 8px; }
+  .name { font: 800 20px var(--font-head); color: #fff; }
+  .tag { font: 500 14px var(--font-body); }
+  nav { display: flex; flex-wrap: wrap; gap: 20px; font: 600 14px var(--font-body); }
+  nav a { color: var(--footer-text); }
+  .legal { width: 100%; margin: 0; font: 500 12px/1.5 var(--font-body); color: var(--footer-legal); }
+</style>

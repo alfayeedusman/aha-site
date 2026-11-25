@@ -1,0 +1,71 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+import { url } from '../config';
+const chips: [IconName, string][] = [
+  ['person_off', 'No account, no tracking'],
+  ['smartphone', 'Stays on your iPhone'],
+  ['block', 'No ads, no in-app purchases'],
+  ['lock', 'Encrypted backups you control'],
+];
+---
+<section id="privacy" class="privacy on-dark" aria-labelledby="privacy-title">
+  <div class="inner">
+    <div class="copy">
+      <div class="eyebrow">Privacy</div>
+      <h2 id="privacy-title" class="h2" data-reveal>Your stuff. Your phone. That's it.</h2>
+      <p>aha! has no account and no servers. Your memories and photos stay on your iPhone, and backups are password-protected files only you hold.</p>
+      <a class="btn" href={url('privacy')}>Read the privacy policy<Icon name="arrow_forward" size={20} /></a>
+    </div>
+    <ul class="chips">
+      {chips.map(([icon, label]) => (
+        <li data-reveal><Icon name={icon} size={26} /><span>{label}</span></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .privacy { background: var(--teal-band); color: var(--cream); scroll-margin-top: 70px; }
+  .inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: clamp(52px, 10vw, 80px) var(--gutter);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
+    gap: 40px;
+    align-items: center;
+  }
+  .copy { display: flex; flex-direction: column; gap: 18px; }
+  .eyebrow { color: var(--mint-eyebrow); }
+  p { margin: 0; font: 500 18px/1.55 var(--font-body); color: var(--mint-body); max-width: 480px; }
+  .btn {
+    align-self: flex-start;
+    height: 50px;
+    padding: 0 22px;
+    border-radius: 25px;
+    background: var(--cream);
+    color: var(--teal-deep);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font: 800 15px var(--font-body);
+  }
+  .btn:hover { color: var(--teal-deep); }
+  .chips {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+    gap: 14px;
+  }
+  .chips li {
+    padding: 20px;
+    border-radius: 24px;
+    background: oklch(1 0 0 / 0.1);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font: 700 16px var(--font-body);
+  }
+</style>

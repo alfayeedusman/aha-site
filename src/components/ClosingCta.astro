@@ -1,0 +1,27 @@
+---
+import AppStoreBadge from './AppStoreBadge.astro';
+import { url } from '../config';
+---
+<section class="closing" aria-labelledby="closing-title">
+  <img data-reveal src={url('icon/AppIcon-180.png')} alt="aha! app icon" width="96" height="96" loading="lazy" />
+  <h2 id="closing-title" data-reveal>One less thing to remember.</h2>
+  <p>Put it away, tell aha! where, and never go hunting again.</p>
+  <AppStoreBadge class="closing-badge" />
+</section>
+
+<style>
+  .closing {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: clamp(52px, 10vw, 80px) var(--gutter);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    text-align: center;
+  }
+  img { width: 96px; height: 96px; border-radius: 22px; box-shadow: 0 16px 36px oklch(0.4 0.08 185 / 0.3); }
+  h2 { margin: 0; font: 800 clamp(36px, 5vw, 64px) / 1 var(--font-head); letter-spacing: -0.04em; }
+  p { margin: 0; font: 500 18px/1.5 var(--font-body); color: var(--muted); max-width: 520px; }
+  .closing :global(.closing-badge) { margin-top: 6px; }
+</style>

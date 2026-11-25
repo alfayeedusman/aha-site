@@ -1,0 +1,133 @@
+---
+import Icon from './Icon.astro';
+import { url } from '../config';
+interface Props { onHome?: boolean }
+const { onHome = true } = Astro.props;
+const home = onHome ? '' : url('');
+const links = [
+  ['#how', 'How it works'],
+  ['#features', 'Features'],
+  ['#privacy', 'Privacy'],
+  ['#support', 'Support'],
+] as const;
+---
+<header class="site-header" data-header>
+  <div class="row">
+    <a href={`${home}#top`} class="brand">
+      <img src={url('icon/AppIcon-120.png')} alt="" width="36" height="36" />
+      <span>aha!</span>
+    </a>
+    <div class="spacer"></div>
+    <nav class="nav" aria-label="Main">
+      {links.map(([href, label]) => <a href={`${home}${href}`}>{label}</a>)}
+    </nav>
+    <a href={`${home}#download`} class="get">Get aha!</a>
+    <button class="menu-btn" type="button" aria-label="Menu" aria-expanded="false" aria-controls="mobile-menu" data-menu-btn>
+      <Icon name="menu" class="i-menu" />
+      <Icon name="close" class="i-close" />
+    </button>
+  </div>
+  <nav id="mobile-menu" class="mobile-nav" aria-label="Main" hidden data-menu>
+    {links.map(([href, label]) => <a href={`${home}${href}`}>{label}</a>)}
+  </nav>
+</header>
+
+<script>
+  const btn = document.querySelector<HTMLButtonElement>('[data-menu-btn]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+  if (btn && menu) {
+    const set = (open: boolean, focusBtn = false) => {
+      btn.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+      if (!open && focusBtn) btn.focus();
+    };
+    btn.addEventListener('click', () => set(btn.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', (e) => { if ((e.target as Element).closest('a')) set(false); });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') set(false, true);
+    });
+    matchMedia('(min-width: 760px)').addEventListener('change', (e) => { if (e.matches) set(false); });
+  }
+</script>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: oklch(0.982 0.006 165 / 0.88);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .row {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; color: var(--ink); }
+  .brand:hover { color: var(--ink); }
+  .brand img { width: 36px; height: 36px; border-radius: 9px; }
+  .brand span { font: 800 24px var(--font-head); letter-spacing: -0.02em; }
+  .spacer { flex: 1; }
+  .nav { display: flex; gap: 22px; font: 600 15px var(--font-body); }
+  .nav a, .mobile-nav a { color: var(--ink); }
+  .get {
+    flex: none;
+    height: 44px;
+    padding: 0 18px;
+    border-radius: 22px;
+    background: var(--ink);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font: 700 14px var(--font-body);
+    transition: transform 0.2s;
+  }
+  .get:hover { color: #fff; transform: translateY(-2px); }
+  .menu-btn {
+    display: none;
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    padding: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--ink);
+    box-shadow: 0 1px 4px rgba(20, 60, 60, 0.1);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 24px;
+  }
+  .menu-btn :global(.i-close) { display: none; }
+  .menu-btn[aria-expanded='true'] :global(.i-menu) { display: none; }
+  .menu-btn[aria-expanded='true'] :global(.i-close) { display: block; }
+  .mobile-nav {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 24px 16px;
+    display: flex;
+    flex-direction: column;
+    animation: aha-drop 0.25s both;
+  }
+  .mobile-nav[hidden] { display: none; }
+  .mobile-nav a {
+    padding: 15px 4px;
+    border-bottom: 1px solid var(--line);
+    font: 700 18px var(--font-body);
+  }
+  .mobile-nav a:last-child { border-bottom: 0; }
+  @media (max-width: 759.98px) {
+    .nav { display: none; }
+    .menu-btn { display: flex; }
+  }
+  @media (min-width: 760px) {
+    .mobile-nav { display: none !important; }
+  }
+</style>

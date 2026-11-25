@@ -1,0 +1,66 @@
+---
+import Icon, { type IconName } from './Icon.astro';
+import Marquee from './Marquee.astro';
+const features: { icon: IconName; title: string; text: string; vault?: boolean }[] = [
+  { icon: 'location_on', title: 'Visual Memory Pin', text: 'Tap the photo right where it lives. No more "it\'s in there somewhere."' },
+  { icon: 'inventory_2', title: 'Remember a whole box', text: 'One photo, one place, and everything inside becomes searchable.' },
+  { icon: 'shelves', title: 'Places and boxes', text: 'Your whole home, mapped: closets, drawers, garage shelves.' },
+  { icon: 'history', title: 'Location history', text: "Every spot it's lived and when, plus a timeline of finds." },
+  { icon: 'mic', title: 'Just say it', text: 'On-device voice capture turns a sentence into a saved memory you confirm.' },
+  { icon: 'lock', title: 'Secret Vault', text: 'Some things are just for you. Private spots stay behind Face ID.', vault: true },
+];
+---
+<section id="features" class="features" aria-labelledby="features-title">
+  <div class="inner">
+    <h2 id="features-title" class="h2" data-reveal>Everything you need to never lose it again.</h2>
+    <div class="grid">
+      {features.map((f) => (
+        <article class:list={['card', { vault: f.vault }]} data-reveal>
+          <span class="tile"><Icon name={f.icon} size={30} /></span>
+          <h3>{f.title}</h3>
+          <p>{f.text}</p>
+        </article>
+      ))}
+    </div>
+    <Marquee />
+  </div>
+</section>
+
+<style>
+  .features { background: var(--mint); scroll-margin-top: 70px; }
+  .inner {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: clamp(48px, 9vw, 72px) var(--gutter);
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+  }
+  .h2 { max-width: 720px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); gap: 20px; }
+  .card {
+    background: #fff;
+    border-radius: 28px;
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 220px;
+  }
+  .tile {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    background: var(--mint);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--teal-icon);
+    margin-bottom: 6px;
+  }
+  h3 { margin: 0; font: 700 22px/1.15 var(--font-head); }
+  p { margin: 0; font: 500 15px/1.5 var(--font-body); color: var(--muted); }
+  .vault { background: var(--vault-bg); color: var(--vault-ink); }
+  .vault .tile { background: var(--vault-tile); color: var(--vault-yellow); }
+  .vault p { color: var(--vault-muted); }
+</style>

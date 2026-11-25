@@ -1,0 +1,74 @@
+---
+import Icon from './Icon.astro';
+import { config } from '../config';
+const faqs = [
+  ['Do I need an account?', "No. Open the app and start remembering. There's nothing to sign up for."],
+  ['What happens if I lose my phone?', 'aha! has no cloud, so make a backup from Settings → Backup & restore. It creates a password-protected .aha file you can keep in Files, iCloud Drive or anywhere you like, and restore on a new iPhone.'],
+  ['I forgot my backup password.', "We never see or store it, so it can't be reset. Create a new backup from the app with a password you'll remember."],
+  ['Is voice processed on my phone?', 'Yes, when your iPhone supports on-device recognition. If it doesn\'t, aha! only uses Apple\'s online speech service if you turn on "Online voice fallback" in Settings. Otherwise you can type.'],
+  ['How do I open Secret Vault?', "Go to the Memories tab and tap Secret Vault. It opens with Face ID, or your iPhone passcode if Face ID isn't available."],
+  ['How do I get a refund?', 'Purchases are handled by Apple. Request a refund at reportaproblem.apple.com.'],
+];
+---
+<section id="support" class="support" aria-labelledby="support-title">
+  <div class="inner">
+    <h2 id="support-title" data-reveal>Support &amp; questions</h2>
+    <div class="list">
+      {faqs.map(([q, a]) => (
+        <details data-reveal>
+          <summary>{q}</summary>
+          <p>{a}</p>
+        </details>
+      ))}
+    </div>
+    <div class="contact">
+      <Icon name="mail" size={26} class="mail" />
+      <div class="text">
+        <div class="t1">Still stuck?</div>
+        <div class="t2">We usually reply within two business days.</div>
+      </div>
+      <a href={`mailto:${config.supportEmail}`}>{config.supportEmail}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .support { border-top: 1px solid var(--line); scroll-margin-top: 70px; }
+  .inner {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: clamp(48px, 9vw, 72px) var(--gutter);
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  h2 { margin: 0; font: 800 clamp(30px, 3.6vw, 44px) / 1.05 var(--font-head); letter-spacing: -0.03em; }
+  .list { display: flex; flex-direction: column; gap: 12px; }
+  details { background: #fff; border-radius: 22px; padding: 18px 22px; box-shadow: var(--shadow-card); }
+  summary { font: 700 17px var(--font-body); cursor: pointer; }
+  details p { margin: 10px 0 0; font: 500 16px/1.55 var(--font-body); color: var(--muted); }
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    padding: 20px 22px;
+    border-radius: 24px;
+    background: var(--tang-soft);
+  }
+  .contact :global(.mail) { color: var(--tang-text); }
+  .text { flex: 1; min-width: 200px; }
+  .t1 { font: 700 17px var(--font-body); }
+  .t2 { font: 500 15px var(--font-body); color: var(--tang-text); }
+  .contact a {
+    height: 46px;
+    padding: 0 20px;
+    border-radius: 23px;
+    background: var(--ink);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    font: 700 15px var(--font-body);
+  }
+  .contact a:hover { color: #fff; }
+</style>
