@@ -21,7 +21,12 @@ KEY="${AHA_SSH_KEY:-$HOME/.ssh/yowtobooth_hostinger}"
 DOCROOT="domains/yowtech.io/public_html/aha"
 SITE_URL="https://aha.yowtech.io"
 
-SSH=(ssh -p "$PORT" -i "$KEY" -o IdentitiesOnly=yes -o BatchMode=yes "$USER@$HOST")
+# One shared SSH connection per deploy (ControlMaster): Hostinger's brute-force protection
+# blocks an IP that opens many SSH connections in a short time.
+CTL="/tmp/aha-deploy-%C"
+SSH_OPTS="-p $PORT -i $KEY -o IdentitiesOnly=yes -o BatchMode=yes -o ConnectTimeout=20 -o ControlMaster=auto -o ControlPath=$CTL -o ControlPersist=60"
+SSH=(ssh $SSH_OPTS "$USER@$HOST")
+trap 'ssh $SSH_OPTS -O exit "$USER@$HOST" 2>/dev/null || true' EXIT
 cd "$(dirname "${BASH_SOURCE[0]}")/.."
 
 if [[ "${1:-}" == "--rollback" ]]; then
@@ -42,7 +47,7 @@ rm -rf dist
 SITE_URL="$SITE_URL" BASE_PATH=/ npm run build >/dev/null
 
 echo "→ uploading to ~/releases/$REL"
-rsync -az --checksum -e "ssh -p $PORT -i $KEY -o IdentitiesOnly=yes -o BatchMode=yes" dist/ "$USER@$HOST:releases/$REL/"
+rsync -az --checksum -e "ssh $SSH_OPTS" dist/ "$USER@$HOST:releases/$REL/"
 
 echo "→ switching aha.yowtech.io to $REL"
 "${SSH[@]}" "set -e; test -f ~/releases/$REL/index.html; ln -sfn \"\$HOME/releases/$REL\" ~/$DOCROOT;
