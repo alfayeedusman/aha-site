@@ -30,21 +30,18 @@ The build emits `privacy.html` and `support.html` (`build.format: 'file'`). The 
 
 ## Deploy
 
-Every push to `main` runs `.github/workflows/deploy.yml`:
+```sh
+./deploy/deploy.sh             # build → upload over SSH → switch aha.yowtech.io → check live URLs
+./deploy/deploy.sh --rollback  # go back to the previous release
+```
 
-1. **Hostinger:** builds the site and uploads `dist/` to aha.yowtech.io over FTP. The same build is also pushed to the `hostinger` branch.
-2. **GitHub Pages (redirects only):** iOS app 1.0.0 links to `alfayeedusman.github.io/aha-site/privacy.html` and `support.html`. GitHub Pages now serves only tiny redirect pages that send those links (and the old home page) to aha.yowtech.io. Keep it on until no app version in use links there. New app builds should use `https://aha.yowtech.io/privacy` and `https://aha.yowtech.io/support` (`lib/app/app_config.dart`).
+How it works: each deploy is uploaded to `~/releases/aha-site-<date>-<commit>/` on the Hostinger account (SSH port 65002, key `~/.ssh/yowtobooth_hostinger`). Then `~/domains/yowtech.io/public_html/aha`, the aha.yowtech.io document root, is pointed at it with a symlink. Your other subdomains use the same pattern. The last 5 releases are kept. The SSH host, user, port and key can be overridden with `AHA_SSH_HOST`, `AHA_SSH_USER`, `AHA_SSH_PORT` and `AHA_SSH_KEY`.
 
-### Hostinger FTP setup (one time)
+Hostinger's CDN returns 403 to headless browsers (e.g. `HeadlessChrome`). Real browsers and curl get through. Use a normal user agent for automated checks.
 
-1. In hPanel: **Websites → aha.yowtech.io → Files → FTP Accounts**. Create an FTP account (or use the main one) and note the host, username and password.
-2. In GitHub: aha-site → Settings → Secrets and variables → Actions:
-   - **Secrets:** `FTP_SERVER` (e.g. `ftp.yowtech.io` or the IP hPanel shows), `FTP_USERNAME`, `FTP_PASSWORD`
-   - **Variable** `FTP_DIR`: the site's folder as seen by that FTP account, ending in `/`. For an account limited to the site's own folder, leave it unset. For the main account, use something like `domains/aha.yowtech.io/public_html/`.
-3. Run the **Deploy** workflow (Actions → Deploy → Run workflow).
-4. Delete Hostinger's default "Coming soon" `index.php` from the site folder. (`.htaccess` already prefers `index.html`.)
+### GitHub Pages (redirects only)
 
-**Without FTP:** upload the contents of a `dist/` build (or `../aha-yowtech-io-site.zip`) with hPanel's File Manager into the site's `public_html`, and extract it there. Or use hPanel → Advanced → **Git** with this repo and branch `hostinger`.
+iOS app 1.0.0 links to `alfayeedusman.github.io/aha-site/privacy.html` and `support.html`. On every push to `main`, `.github/workflows/deploy.yml` publishes tiny redirect pages there that send visitors to aha.yowtech.io. Keep it running until no app version in use links there. New app builds should use `https://aha.yowtech.io/privacy` and `https://aha.yowtech.io/support` (`lib/app/app_config.dart`).
 
 ## Editing content
 
