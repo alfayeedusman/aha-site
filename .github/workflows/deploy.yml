@@ -18,14 +18,8 @@ env:
   SITE_URL: ${{ vars.SITE_URL || 'https://aha.yowtech.io' }}
 
 jobs:
-  github-pages-redirects:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Build redirect stubs
         run: |
@@ -46,5 +40,18 @@ jobs:
       - uses: actions/upload-pages-artifact@v3
         with:
           path: stub
+
+  # Separate job (GitHub's recommended layout): deploying in the same job as the upload
+  # intermittently fails with "No artifacts named github-pages were found".
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - id: deployment
         uses: actions/deploy-pages@v4
