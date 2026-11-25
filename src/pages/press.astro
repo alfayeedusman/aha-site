@@ -30,7 +30,7 @@ const swatches = [
       <h1>Press kit</h1>
       <p class="lead">{summary}</p>
       <div class="actions">
-        <a class="btn" href={url('press/aha-press-kit.zip')} download>Download everything (.zip)</a>
+        <a class="btn" href={url('press-kit/aha-press-kit.zip')} download>Download everything (.zip)</a>
         <a class="btn ghost" href={`mailto:${config.supportEmail}?subject=Press%20enquiry`}>Press contact: {config.supportEmail}</a>
       </div>
     </div>
@@ -56,7 +56,7 @@ const swatches = [
       <h2>App icon</h2>
       <div class="icon-row">
         <img src={url('icon/AppIcon-180.png')} alt="aha! app icon" width="120" height="120" loading="lazy" />
-        <p>Use the icon as is: don't recolour, stretch or add effects. iOS applies the rounded mask, so the file is square. <a href={url('press/aha-app-icon-1024.png')} download>Download PNG (1024 × 1024)</a></p>
+        <p>Use the icon as is: don't recolor, stretch or add effects. iOS applies the rounded mask, so the file is square. <a href={url('press-kit/aha-app-icon-1024.png')} download>Download PNG (1024 × 1024)</a></p>
       </div>
     </section>
 
@@ -65,7 +65,7 @@ const swatches = [
       <p>App Store screenshots, 1320 × 2868 PNG. Click one to open the full-size file.</p>
       <div class="shots">
         {screenshots.map(([f, label]) => (
-          <a href={url(`press/screens/${f}.png`)} download>
+          <a href={url(`press-kit/screens/${f}.png`)} download>
             <Picture src={shot(f)} formats={['avif', 'webp']} fallbackFormat="webp" widths={[200, 400]} sizes="200px" alt={label} loading="lazy" />
             <span>{label}</span>
           </a>
