@@ -1,0 +1,170 @@
+---
+import { getImage } from 'astro:assets';
+import Icon from './Icon.astro';
+import { url } from '../config';
+import posterSrc from '../assets/aha-launch-ad-poster.jpg';
+const poster = await getImage({ src: posterSrc, format: 'webp', width: 720 });
+---
+<section id="watch" class="watch" aria-labelledby="watch-title">
+  <div class="panel on-dark">
+    <div class="copy">
+      <div class="eyebrow">See it in action</div>
+      <h2 id="watch-title" class="h2" data-reveal>Lost it. Asked. Found it.</h2>
+      <p>Under a minute: snap where you put something, then just ask when you need it. Your passport, the spare key, the holiday lights.</p>
+      <button class="btn" type="button" data-video-sound-play>
+        <Icon name="volume_up" size={20} />Watch with sound
+      </button>
+    </div>
+    <div class="frame" data-reveal>
+      <video
+        data-launch-video
+        src={url('video/aha-launch-ad.mp4')}
+        poster={poster.src}
+        width="720"
+        height="1280"
+        muted
+        loop
+        playsinline
+        preload="none"
+        aria-label="aha! launch video: save where you put things, then ask and find them"
+      ></video>
+      <div class="controls">
+        <button class="ctl" type="button" data-video-toggle aria-label="Play video">
+          <Icon name="play_arrow" size={22} class="i-play" /><Icon name="pause" size={22} class="i-pause" />
+        </button>
+        <button class="ctl" type="button" data-video-mute aria-pressed="false" aria-label="Turn sound on">
+          <Icon name="volume_off" size={22} class="i-off" /><Icon name="volume_up" size={22} class="i-on" />
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const video = document.querySelector<HTMLVideoElement>('[data-launch-video]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-video-toggle]');
+  const mute = document.querySelector<HTMLButtonElement>('[data-video-mute]');
+  const withSound = document.querySelector<HTMLButtonElement>('[data-video-sound-play]');
+  if (video && toggle && mute && withSound) {
+    const frame = video.parentElement!;
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let userPaused = false;
+
+    const sync = () => {
+      frame.classList.toggle('is-playing', !video.paused);
+      frame.classList.toggle('is-muted', video.muted);
+      toggle.setAttribute('aria-label', video.paused ? 'Play video' : 'Pause video');
+      mute.setAttribute('aria-pressed', String(!video.muted));
+      mute.setAttribute('aria-label', video.muted ? 'Turn sound on' : 'Turn sound off');
+    };
+    ['play', 'pause', 'volumechange'].forEach((e) => video.addEventListener(e, sync));
+    sync();
+
+    const play = () => video.play().catch(() => sync());
+
+    toggle.addEventListener('click', () => {
+      if (video.paused) { userPaused = false; play(); } else { userPaused = true; video.pause(); }
+    });
+    mute.addEventListener('click', () => {
+      video.muted = !video.muted;
+      if (!video.muted && video.paused) { userPaused = false; play(); }
+    });
+    withSound.addEventListener('click', () => {
+      video.muted = false;
+      video.currentTime = 0;
+      userPaused = false;
+      play();
+      frame.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+    });
+
+    // Muted autoplay only while the video is on screen, and never for reduced motion.
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(
+        ([e]) => {
+          if (e.isIntersecting && !reduce && !userPaused) play();
+          else if (!e.isIntersecting && !video.paused) video.pause();
+        },
+        { threshold: 0.5 },
+      ).observe(video);
+    }
+  }
+</script>
+
+<style>
+  .watch {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: clamp(24px, 5vw, 40px) var(--gutter);
+    scroll-margin-top: 70px;
+  }
+  .panel {
+    background: var(--teal-band);
+    color: var(--cream);
+    border-radius: 40px;
+    padding: clamp(32px, 6vw, 64px);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: clamp(32px, 5vw, 56px);
+    align-items: center;
+    overflow: hidden;
+  }
+  .copy { display: flex; flex-direction: column; gap: 18px; }
+  .eyebrow { color: var(--mint-eyebrow); }
+  .h2 { margin: 0; }
+  p { margin: 0; font: 500 18px/1.55 var(--font-body); color: var(--mint-body); max-width: 460px; }
+  .btn {
+    align-self: flex-start;
+    height: 50px;
+    padding: 0 22px 0 18px;
+    border: 0;
+    border-radius: 25px;
+    background: var(--tang);
+    color: var(--tang-ink);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font: 800 15px var(--font-body);
+    cursor: pointer;
+    box-shadow: 0 14px 30px oklch(0.76 0.16 55 / 0.35);
+    transition: transform 0.2s var(--ease-reveal);
+  }
+  .btn:hover { transform: translateY(-2px); }
+  .frame {
+    position: relative;
+    justify-self: center;
+    width: min(100%, 320px);
+    aspect-ratio: 9 / 16;
+    border-radius: 34px;
+    overflow: hidden;
+    background: oklch(0.38 0.08 186);
+    box-shadow: 0 30px 60px oklch(0.2 0.05 190 / 0.45), 0 0 0 8px oklch(1 0 0 / 0.08);
+  }
+  video { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .controls {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    display: flex;
+    gap: 8px;
+  }
+  .ctl {
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: oklch(0.2 0.03 200 / 0.55);
+    color: #fff;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .ctl:hover { background: oklch(0.2 0.03 200 / 0.75); }
+  .ctl :global(.icon) { grid-area: 1 / 1; }
+  .frame :global(.i-pause), .frame :global(.i-on) { display: none; }
+  .frame:global(.is-playing) :global(.i-play) { display: none; }
+  .frame:global(.is-playing) :global(.i-pause) { display: block; }
+  .frame:not(:global(.is-muted)) :global(.i-off) { display: none; }
+  .frame:not(:global(.is-muted)) :global(.i-on) { display: block; }
+</style>
