@@ -8,13 +8,13 @@ export const summary =
 export const longDescription = [
   summary,
   'It is made for the things you use rarely and lose often: passports, spare keys, birth certificates, chargers, seasonal decorations and boxes in storage. Places and boxes (closets, drawers, garage shelves) keep a whole home organized, and a location history shows every spot an item has lived.',
-  `aha! is private by design. There is no account, no server, no ads and no tracking: everything stays on the iPhone. A Secret Vault keeps private memories behind Face ID, and backups are password-encrypted files the user keeps. It is a one-time purchase (${config.price.display}, local prices vary by country) with no subscription and no in-app purchases.`,
+  `aha! is private by design. There is no account, no server, no ads and no tracking: everything stays on the iPhone. A Secret Vault keeps private memories behind Face ID, and backups are password-encrypted files the user keeps. There is no subscription and no in-app purchase.`,
 ];
 
 export const keyFacts: [string, string][] = [
   ['App', config.appName],
   ['Platform', `iPhone, iOS ${config.minIos} or later`],
-  ['Price', `${config.price.display} once (App Store local pricing applies). No subscription, no in-app purchases, no ads.`],
+  ['Business model', 'No subscription, no in-app purchases, no ads.'],
   ['Category', 'Productivity, Lifestyle'],
   ['Language', 'English'],
   ['Availability', 'Worldwide on the App Store'],
@@ -34,7 +34,7 @@ export const features = [
 
 export const faqs: [string, string][] = [
   ['What is aha!?', summary],
-  ['How much does aha! cost?', `${config.price.display}, paid once. The App Store sets the local price in each country. There is no subscription, no in-app purchase and no ads.`],
+  ['Is there a subscription?', 'No. There is no subscription, no in-app purchase and no ads.'],
   ['Do I need an account?', "No. Open the app and start remembering. There's nothing to sign up for."],
   ['Which iPhones does aha! work on?', `Any iPhone running iOS ${config.minIos} or later.`],
   ['Does aha! work offline?', 'Yes. Everything is stored and searched on your iPhone, so it works without an internet connection.'],

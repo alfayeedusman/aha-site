@@ -1,13 +1,12 @@
 ---
 import AppStoreBadge from './AppStoreBadge.astro';
-import { config, url } from '../config';
+import { url } from '../config';
 ---
 <section class="closing" aria-labelledby="closing-title">
   <img data-reveal src={url('icon/AppIcon-180.png')} alt="aha! app icon" width="96" height="96" loading="lazy" />
   <h2 id="closing-title" data-reveal>One less thing to remember.</h2>
   <p>Put it away, tell aha! where, and never go hunting again.</p>
   <AppStoreBadge class="closing-badge" />
-  <p class="price">{config.price.display} once for iPhone. No subscription, ever. Local prices vary by country.</p>
 </section>
 
 <style>
@@ -25,5 +24,4 @@ import { config, url } from '../config';
   h2 { margin: 0; font: 800 clamp(36px, 5vw, 64px) / 1 var(--font-head); letter-spacing: -0.04em; }
   p { margin: 0; font: 500 18px/1.5 var(--font-body); color: var(--muted); max-width: 520px; }
   .closing :global(.closing-badge) { margin-top: 6px; }
-  .price { font: 600 14px/1.4 var(--font-body); }
 </style>

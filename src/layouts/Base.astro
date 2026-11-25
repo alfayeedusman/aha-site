@@ -18,7 +18,8 @@ interface Props {
 }
 const { title, description, path = '', noindex = false, reveal = false, ogVideo } = Astro.props;
 const ogVideoUrl = ogVideo ? new URL(url(ogVideo), Astro.site).href : null;
-const { plausibleDomain, umami } = config.analytics;
+const statsHost = new URL(Astro.site!).hostname;
+const statsUrl = url('api/hit.php');
 const canonical = new URL(url(path), Astro.site).href;
 const ogImage = new URL(url('og.png'), Astro.site).href;
 ---
@@ -70,8 +71,23 @@ const ogImage = new URL(url('og.png'), Astro.site).href;
         if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('reveal');
       </script>
     )}
-    {plausibleDomain && <script defer data-domain={plausibleDomain} src="https://plausible.io/js/script.outbound-links.js"></script>}
-    {!plausibleDomain && umami.websiteId && <script defer data-website-id={umami.websiteId} src={umami.src}></script>}
+    {config.analytics && !noindex && (
+      <script is:inline define:vars={{ statsHost, statsUrl }}>
+        (function () {
+          try { if (location.hostname !== statsHost || localStorage.getItem('aha_notrack')) return; } catch (e) { return; }
+          function send(k) {
+            var d = JSON.stringify({ k: k, p: location.pathname, r: document.referrer });
+            if (navigator.sendBeacon) navigator.sendBeacon(statsUrl, d);
+            else fetch(statsUrl, { method: 'POST', body: d, keepalive: true });
+          }
+          send('view');
+          document.addEventListener('click', function (e) {
+            var t = e.target.closest && e.target.closest('[data-track]');
+            if (t) send(t.getAttribute('data-track'));
+          }, true);
+        })();
+      </script>
+    )}
     <slot name="head" />
   </head>
   <body>

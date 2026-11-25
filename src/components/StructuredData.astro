@@ -24,14 +24,6 @@ const app: Record<string, unknown> = {
   inLanguage: 'en',
   isAccessibleForFree: false,
   featureList: features.map(([t, d]) => `${t}: ${d}`),
-  offers: {
-    '@type': 'Offer',
-    price: config.price.amount,
-    priceCurrency: config.price.currency,
-    availability: 'https://schema.org/InStock',
-    url: store,
-    category: 'One-time purchase',
-  },
   publisher: { '@id': `${home}#org` },
   author: { '@id': `${home}#org` },
 };

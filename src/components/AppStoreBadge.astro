@@ -7,7 +7,7 @@ import { appStoreHref } from '../config';
 interface Props { class?: string }
 const { class: cls } = Astro.props;
 ---
-<a class:list={['badge', cls]} href={appStoreHref} data-umami-event="App Store click">
+<a class:list={['badge', cls]} href={appStoreHref} data-track="appstore">
   <img src={badge} alt="Download on the App Store" width="196" height="58" />
 </a>
 

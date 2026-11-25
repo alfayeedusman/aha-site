@@ -7,10 +7,9 @@ const tokens: Record<string, string> = {
   companyLegalName: config.companyLegalName,
   address: config.address,
   privacyEmail: config.privacyEmail,
-  websiteNote:
-    config.analytics.plausibleDomain || config.analytics.umami.websiteId
-      ? `This website uses no cookies. We count page visits with ${config.analytics.plausibleDomain ? 'Plausible Analytics' : 'Umami'}, a privacy-friendly tool that doesn't use cookies, doesn't track you across sites and doesn't collect personal data.`
-      : 'This website uses no cookies, analytics or tracking.',
+  websiteNote: config.analytics
+    ? "This website (not the app) uses no cookies and no third-party analytics. To know how many people visit, our own server counts page views, clicks on the App Store button, the country (worked out from your IP address, which we don't store), the type of device and the website that linked to us. Visitors are counted with an anonymous code that changes every day, so we can't recognize you over time. This data stays on our server and isn't shared."
+    : 'This website uses no cookies, analytics or tracking.',
 };
 const html = (await policy.compiledContent())
   .replace(/<!--[\s\S]*?-->/g, '')

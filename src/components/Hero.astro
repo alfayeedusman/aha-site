@@ -2,7 +2,6 @@
 import { Picture } from 'astro:assets';
 import AppStoreBadge from './AppStoreBadge.astro';
 import Icon from './Icon.astro';
-import { config } from '../config';
 import ask from '../assets/screens/hero-phone.png';
 ---
 <section id="top" class="hero">
@@ -12,7 +11,7 @@ import ask from '../assets/screens/hero-phone.png';
     <p class="lead">Snap it, pin the exact spot, then just ask. Passports, spare keys, birth certificates, holiday lights. One less thing to remember.</p>
     <div id="download" class="cta">
       <AppStoreBadge />
-      <div class="cta-note"><b>{config.price.display}, once.</b><br />No subscription. No account. No ads.</div>
+      <div class="cta-note"><b>For iPhone.</b><br />No account. No ads.</div>
     </div>
   </div>
   <div class="visual">
