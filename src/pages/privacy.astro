@@ -33,7 +33,7 @@ const html = (await policy.compiledContent())
   </main>
   <footer class="p-footer">
     <div class="row">
-      <span>© {config.year} {config.companyName}</span>
+      <span class="copy">© {config.year} <a href={config.companyUrl}>{config.companyName}</a></span>
       <span class="links"><a href={url('')}>Home</a><a href={url('#support')}>Support</a></span>
     </div>
   </footer>
@@ -95,4 +95,5 @@ const html = (await policy.compiledContent())
     color: var(--muted);
   }
   .links { display: flex; gap: 18px; }
+  .copy a { text-decoration: underline; text-underline-offset: 2px; }
 </style>

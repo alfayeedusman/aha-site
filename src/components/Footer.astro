@@ -13,7 +13,7 @@ import { config, url } from '../config';
       <a href={url('#support')}>Support</a>
       <a href={`mailto:${config.helloEmail}`}>Contact</a>
     </nav>
-    <p class="legal">© {config.year} {config.companyName}. Apple, the Apple logo, iPhone and Face ID are trademarks of Apple Inc. App Store is a service mark of Apple Inc.</p>
+    <p class="legal">© {config.year} <a href={config.companyUrl}>{config.companyName}</a>. Apple, the Apple logo, iPhone and Face ID are trademarks of Apple Inc. App Store is a service mark of Apple Inc.</p>
   </div>
 </footer>
 
@@ -36,4 +36,6 @@ import { config, url } from '../config';
   nav { display: flex; flex-wrap: wrap; gap: 20px; font: 600 14px var(--font-body); }
   nav a { color: var(--footer-text); }
   .legal { width: 100%; margin: 0; font: 500 12px/1.5 var(--font-body); color: var(--footer-legal); }
+  .legal a { color: var(--footer-text); text-decoration: underline; text-underline-offset: 2px; }
+  .legal a:hover { color: #fff; }
 </style>

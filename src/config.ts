@@ -7,7 +7,8 @@ export const config = {
   appStoreUrl: '',
   /** Numeric App Store id for the Smart App Banner (empty until the app is live). */
   appStoreId: '',
-  companyName: '[Your company]',
+  companyName: 'Yowtech IT Solutions',
+  companyUrl: 'https://yowtech.io',
   companyLegalName: '[Your company legal name]',
   address: '[address]',
   supportEmail: 'support@yourdomain.com',
