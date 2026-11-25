@@ -4,9 +4,9 @@
 export const config = {
   appName: 'aha! - Where I Put It',
   /** Full App Store link, e.g. https://apps.apple.com/app/id1234567890 (empty until the app is live). */
-  appStoreUrl: '',
+  appStoreUrl: 'https://apps.apple.com/app/id6839034222',
   /** Numeric App Store id for the Smart App Banner (empty until the app is live). */
-  appStoreId: '',
+  appStoreId: '6839034222',
   companyName: 'Yowtech IT Solutions',
   companyUrl: 'https://yowtech.io',
   companyLegalName: 'Yowtech IT Solutions',
