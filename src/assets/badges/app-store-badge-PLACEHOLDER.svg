@@ -1,8 +1,0 @@
-<!-- TODO: PLACEHOLDER. Replace with Apple's official "Download on the App Store" badge
-     (black, US-UK English) from https://developer.apple.com/app-store/marketing/guidelines/
-     Save it as src/assets/badges/app-store-badge.svg and update AppStoreBadge.astro's import. -->
-<svg xmlns="http://www.w3.org/2000/svg" width="120" height="40" viewBox="0 0 120 40">
-  <rect x="0.5" y="0.5" width="119" height="39" rx="6.5" fill="#000" stroke="#a6a6a6"/>
-  <text x="60" y="16" fill="#fff" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="7.5" font-weight="500" text-anchor="middle">Download on the</text>
-  <text x="60" y="30" fill="#fff" font-family="-apple-system, Helvetica, Arial, sans-serif" font-size="14" font-weight="600" letter-spacing="-0.2" text-anchor="middle">App Store</text>
-</svg>

@@ -51,14 +51,11 @@ iOS app 1.0.0 links to `alfayeedusman.github.io/aha-site/privacy.html` and `supp
 - **Screenshots:** replace the files in `src/assets/screens/` (same names). Astro produces AVIF/WebP at build time.
 - **Social image:** `public/og.png` (1200×630).
 
-## App Store badge (TODO)
+## App Store badge
 
-`src/assets/badges/app-store-badge-PLACEHOLDER.svg` is a stand-in. Download Apple's official black "Download on the App Store" badge from
-https://developer.apple.com/app-store/marketing/guidelines/, save it as `src/assets/badges/app-store-badge.svg`, and change the import in
-`src/components/AppStoreBadge.astro`. Don't redraw or modify it.
+`src/assets/badges/app-store-badge.svg` is Apple's official black "Download on the App Store" badge (US/UK), from Wikimedia Commons (Apple Inc., public domain). Use it as is: don't recolor, redraw or crop it.
 
 ## Before launch
 
 - [ ] Fill in `src/config.ts`: company name and legal name, address, support/privacy/hello emails, `appStoreUrl`, `appStoreId` (turns on the Smart App Banner)
-- [ ] Replace the App Store badge placeholder
 - [ ] Make sure the support and privacy inboxes exist

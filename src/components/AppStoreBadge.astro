@@ -1,18 +1,20 @@
 ---
-// TODO: swap the placeholder for Apple's official badge artwork (don't redraw it).
-import badge from '../assets/badges/app-store-badge-PLACEHOLDER.svg?url';
+// Apple's official "Download on the App Store" badge (US/UK, black). Source: Apple Inc.,
+// public domain via Wikimedia Commons (File:Download_on_the_App_Store_Badge.svg).
+// Use it unmodified, per Apple's marketing guidelines.
+import badge from '../assets/badges/app-store-badge.svg?url';
 import { appStoreHref } from '../config';
 interface Props { class?: string }
 const { class: cls } = Astro.props;
 ---
 <a class:list={['badge', cls]} href={appStoreHref}>
-  <img src={badge} alt="Download on the App Store" width="174" height="58" />
+  <img src={badge} alt="Download on the App Store" width="196" height="58" />
 </a>
 
 <style>
   .badge {
     display: inline-flex;
-    border-radius: 14px;
+    border-radius: 9px;
     transition: transform 0.2s, box-shadow 0.2s;
   }
   .badge:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25); }
