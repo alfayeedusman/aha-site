@@ -7,7 +7,7 @@ Built with Astro, plain CSS and self-hosted fonts. No analytics, cookies, tracke
 
 ```sh
 npm install
-npm run dev       # http://localhost:4321/aha-site/
+npm run dev       # http://localhost:4321/
 npm run build     # static output in dist/
 npm run preview   # serve dist/ locally
 npm run check     # type-check
@@ -17,44 +17,34 @@ Requires Node 22+.
 
 ## Where the site lives
 
-`astro.config.mjs` reads two environment variables:
+The public website is **https://aha.yowtech.io** on Hostinger, served from the domain root. GitHub only stores the code. It does not host the site.
+
+`astro.config.mjs` reads two optional environment variables:
 
 | Variable | Default | Use |
 |---|---|---|
-| `SITE_URL` | `https://alfayeedusman.github.io` | Origin for canonical URLs, Open Graph and the sitemap |
-| `BASE_PATH` | `/aha-site` | Sub-path the site is served from (`/` for a custom domain) |
+| `SITE_URL` | `https://aha.yowtech.io` | Origin for canonical URLs, Open Graph and the sitemap |
+| `BASE_PATH` | `/` | Sub-path the site is served from |
 
-For a custom domain at the root: `SITE_URL=https://yourdomain.com BASE_PATH=/ npm run build`.
-
-The build emits `privacy.html` and `support.html` (`build.format: 'file'`). The iOS app links to
-`…/aha-site/privacy.html` and `…/aha-site/support.html`, so **keep these paths working**. `/privacy` also resolves on all the hosts below.
+The build emits `privacy.html` and `support.html` (`build.format: 'file'`). The `.htaccess` file makes `/privacy` and `/support` work without `.html`.
 
 ## Deploy
 
-Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site twice:
+Every push to `main` runs `.github/workflows/deploy.yml`:
 
-1. **GitHub Pages:** https://alfayeedusman.github.io/aha-site/. This is where the shipped iOS app links (`privacy.html`, `support.html`), so keep it running.
-2. **The `hostinger` branch:** a ready-to-serve build for your domain root, including `.htaccess` for clean URLs (`/privacy`) and the 404 page.
+1. **Hostinger:** builds the site and uploads `dist/` to aha.yowtech.io over FTP. The same build is also pushed to the `hostinger` branch.
+2. **GitHub Pages (redirects only):** iOS app 1.0.0 links to `alfayeedusman.github.io/aha-site/privacy.html` and `support.html`. GitHub Pages now serves only tiny redirect pages that send those links (and the old home page) to aha.yowtech.io. Keep it on until no app version in use links there. New app builds should use `https://aha.yowtech.io/privacy` and `https://aha.yowtech.io/support` (`lib/app/app_config.dart`).
 
-### Hostinger (one-time setup)
+### Hostinger FTP setup (one time)
 
-Hostinger's Git deployment copies a branch into `public_html`. It doesn't run `npm`, so point it at the pre-built `hostinger` branch:
+1. In hPanel: **Websites → aha.yowtech.io → Files → FTP Accounts**. Create an FTP account (or use the main one) and note the host, username and password.
+2. In GitHub: aha-site → Settings → Secrets and variables → Actions:
+   - **Secrets:** `FTP_SERVER` (e.g. `ftp.yowtech.io` or the IP hPanel shows), `FTP_USERNAME`, `FTP_PASSWORD`
+   - **Variable** `FTP_DIR`: the site's folder as seen by that FTP account, ending in `/`. For an account limited to the site's own folder, leave it unset. For the main account, use something like `domains/aha.yowtech.io/public_html/`.
+3. Run the **Deploy** workflow (Actions → Deploy → Run workflow).
+4. Delete Hostinger's default "Coming soon" `index.php` from the site folder. (`.htaccess` already prefers `index.html`.)
 
-1. The domain is **https://aha.yowtech.io**. It's set in the repository variable `SITE_URL` (Settings → Secrets and variables → Actions → Variables). If the domain changes, update it there and re-run the Deploy workflow.
-2. In hPanel: **Websites → your site → Advanced → Git**.
-   - Repository: `https://github.com/alfayeedusman/aha-site.git` (public, so no key is needed)
-   - Branch: `hostinger`
-   - Directory: leave empty (deploys into `public_html`, which must be empty first)
-3. Click **Create**, then **Deploy**.
-4. Turn on **Auto deployment** there, copy the webhook URL, and add it in GitHub under Settings → Webhooks (content type `application/json`, push events). Each push to `main` then updates the site.
-5. In hPanel, turn on SSL for the domain and force HTTPS.
-
-Once the domain is live, you can point the app's `privacyPolicyUrl` / `supportUrl` (`lib/app/app_config.dart`) at
-`https://yourdomain.com/privacy` and `/support` in a later app release. Keep GitHub Pages running for older app versions.
-
-### Other hosts
-
-Netlify, Vercel and Cloudflare Pages can build it themselves: build `npm run build`, output `dist`, env `SITE_URL=https://yourdomain.com` and `BASE_PATH=/`.
+**Without FTP:** upload the contents of a `dist/` build (or `../aha-yowtech-io-site.zip`) with hPanel's File Manager into the site's `public_html`, and extract it there. Or use hPanel → Advanced → **Git** with this repo and branch `hostinger`.
 
 ## Editing content
 

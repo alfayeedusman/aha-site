@@ -1,11 +1,13 @@
 name: Deploy
 
-# Every push to main builds the site twice:
-#  1. GitHub Pages at https://alfayeedusman.github.io/aha-site/ (the URLs the iOS app links to)
-#  2. The "hostinger" branch: a ready-to-serve build for your domain root. Hostinger's Git
-#     deployment pulls this branch into public_html (Hostinger doesn't run npm builds itself).
-# Set the repository variable SITE_URL (Settings → Secrets and variables → Actions → Variables)
-# to your domain, e.g. https://yourdomain.com, so canonical/OG/sitemap URLs are right.
+# The public website is https://aha.yowtech.io on Hostinger. GitHub does not host it.
+#
+# Every push to main:
+#  1. Builds the site for aha.yowtech.io and uploads it to Hostinger over FTP
+#     (needs the FTP_SERVER / FTP_USERNAME / FTP_PASSWORD secrets; skipped until they are set).
+#     The same build is also pushed to the "hostinger" branch (for hPanel's Git deployment, optional).
+#  2. Publishes a redirect-only stub on GitHub Pages, so links already shipped in the iOS app
+#     (alfayeedusman.github.io/aha-site/privacy.html and support.html) land on aha.yowtech.io.
 
 on:
   push:
@@ -16,37 +18,16 @@ concurrency:
   group: deploy
   cancel-in-progress: false
 
-jobs:
-  github-pages:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-        env:
-          SITE_URL: https://alfayeedusman.github.io
-          BASE_PATH: /aha-site
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-      - id: deployment
-        uses: actions/deploy-pages@v4
+env:
+  SITE_URL: ${{ vars.SITE_URL || 'https://aha.yowtech.io' }}
 
+jobs:
   hostinger:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -56,8 +37,24 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          SITE_URL: ${{ vars.SITE_URL || 'https://aha.yowtech.io' }}
           BASE_PATH: /
+
+      - name: Upload to Hostinger (FTP)
+        if: ${{ env.FTP_SERVER != '' }}
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./dist/
+          # Folder of aha.yowtech.io inside the FTP account. Set the FTP_DIR variable if it isn't
+          # the FTP account's root (e.g. "public_html/" or "domains/aha.yowtech.io/public_html/").
+          server-dir: ${{ vars.FTP_DIR || './' }}
+
+      - name: Note when FTP isn't configured
+        if: ${{ env.FTP_SERVER == '' }}
+        run: echo "::warning::FTP_SERVER secret not set, so nothing was uploaded to Hostinger. See README → Deploy."
+
       - name: Publish dist/ to the hostinger branch
         working-directory: dist
         run: |
@@ -66,3 +63,34 @@ jobs:
           git -c user.name="github-actions[bot]" -c user.email="41898283+github-actions[bot]@users.noreply.github.com" \
             commit -q -m "Build of ${GITHUB_SHA::7}"
           git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${GITHUB_REPOSITORY}.git" hostinger
+
+  github-pages-redirects:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Build redirect stubs
+        run: |
+          mkdir stub
+          page() { # file, target path on the real site
+            url="${SITE_URL}$2"
+            printf '%s\n' '<!doctype html><html lang="en"><head><meta charset="utf-8">' \
+              '<title>aha! - Where I Put It</title><meta name="robots" content="noindex">' \
+              "<link rel=\"canonical\" href=\"$url\"><meta http-equiv=\"refresh\" content=\"0; url=$url\">" \
+              "<script>location.replace(\"$url\")</script></head>" \
+              "<body><p>aha! has moved to <a href=\"$url\">$url</a>.</p></body></html>" > "stub/$1"
+          }
+          page index.html /
+          page privacy.html /privacy
+          page support.html /#support
+          page 404.html /
+          cat stub/privacy.html
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: stub
+      - id: deployment
+        uses: actions/deploy-pages@v4

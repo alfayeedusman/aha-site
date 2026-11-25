@@ -1,5 +1,7 @@
 # Hostinger (Apache/LiteSpeed). Ignored by GitHub Pages.
 Options -MultiViews
+# Serve our index.html even if Hostinger's default index.php ("Coming soon") is still there.
+DirectoryIndex index.html index.php
 RewriteEngine On
 
 # Clean URLs: /privacy -> privacy.html, /support -> support.html

@@ -2,11 +2,9 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// Where the site is served. Defaults to the GitHub Pages project site that the
-// iOS app already links to (privacy.html / support.html). For a custom domain
-// at the root, build with SITE_URL=https://yourdomain.com BASE_PATH=/
-const site = process.env.SITE_URL ?? 'https://alfayeedusman.github.io';
-const base = process.env.BASE_PATH ?? '/aha-site';
+// The public site: https://aha.yowtech.io (Hostinger), served from the domain root.
+const site = process.env.SITE_URL ?? 'https://aha.yowtech.io';
+const base = process.env.BASE_PATH ?? '/';
 
 export default defineConfig({
   site,
