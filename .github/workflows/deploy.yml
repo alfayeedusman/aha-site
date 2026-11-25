@@ -56,7 +56,7 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          SITE_URL: ${{ vars.SITE_URL || 'https://yourdomain.com' }}
+          SITE_URL: ${{ vars.SITE_URL || 'https://aha.yowtech.io' }}
           BASE_PATH: /
       - name: Publish dist/ to the hostinger branch
         working-directory: dist

@@ -2,7 +2,7 @@
 // Anything still in [brackets] or on yourdomain.com is a placeholder to replace.
 
 export const config = {
-  appName: 'aha! — Where I Put It',
+  appName: 'aha! - Where I Put It',
   /** Full App Store link, e.g. https://apps.apple.com/app/id1234567890 (empty until the app is live). */
   appStoreUrl: '',
   /** Numeric App Store id for the Smart App Banner (empty until the app is live). */

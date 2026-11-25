@@ -13,7 +13,7 @@ const html = (await policy.compiledContent())
   .replace(/(?:%25|%){2}(\w+)(?:%25|%){2}/g, (m, k: string) => tokens[k] ?? m);
 ---
 <Base
-  title="Privacy Policy · aha! — Where I Put It"
+  title="Privacy Policy · aha! - Where I Put It"
   description="aha! does not collect, sell or share your data. No account, no server: your memories and photos stay on your iPhone."
   path="privacy"
 >
@@ -26,7 +26,7 @@ const html = (await policy.compiledContent())
   <main id="main" class="policy">
     <div class="title">
       <h1>Privacy Policy</h1>
-      <div class="meta">Effective {config.policyEffective} · Applies to aha! — Where I Put It for iPhone</div>
+      <div class="meta">Effective {config.policyEffective} · Applies to aha! - Where I Put It for iPhone</div>
     </div>
     <div class="summary">The short version: aha! does not collect, sell or share your data. There's no account and no server. Your memories, photos and settings are stored on your iPhone, and backups are files you create and keep.</div>
     <div class="body" set:html={html} />

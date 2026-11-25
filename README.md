@@ -1,6 +1,6 @@
-# aha! — marketing site
+# aha! - marketing site
 
-Static site for **aha! — Where I Put It**: the landing page (`/`), the privacy policy (`/privacy`) and `/support` (redirects to `/#support`).
+Static site for **aha! - Where I Put It**: the landing page (`/`), the privacy policy (`/privacy`) and `/support` (redirects to `/#support`).
 Built with Astro, plain CSS and self-hosted fonts. No analytics, cookies, trackers or third-party requests. The privacy policy promises this, so keep it that way.
 
 ## Run
