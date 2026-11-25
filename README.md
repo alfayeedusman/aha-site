@@ -40,7 +40,7 @@ Every push to `main` runs `.github/workflows/deploy.yml`, which builds the site 
 
 Hostinger's Git deployment copies a branch into `public_html`. It doesn't run `npm`, so point it at the pre-built `hostinger` branch:
 
-1. In GitHub: Settings → Secrets and variables → Actions → **Variables** → add `SITE_URL` = `https://yourdomain.com` (your real domain), then re-run the Deploy workflow.
+1. The domain is **https://aha.yowtech.io**. It's set in the repository variable `SITE_URL` (Settings → Secrets and variables → Actions → Variables). If the domain changes, update it there and re-run the Deploy workflow.
 2. In hPanel: **Websites → your site → Advanced → Git**.
    - Repository: `https://github.com/alfayeedusman/aha-site.git` (public, so no key is needed)
    - Branch: `hostinger`
