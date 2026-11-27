@@ -1,6 +1,7 @@
 <?php
 // Private analytics dashboard for aha.yowtech.io. Password set with deploy/set-admin-password.sh.
 require dirname(__DIR__) . '/api/_stats.php';
+require dirname(__DIR__) . '/api/_asc.php';
 
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
@@ -124,6 +125,32 @@ $flag = fn(string $cc) => strlen($cc) === 2 && ctype_alpha($cc)
 $fmt = fn($n) => number_format((int)$n);
 $pct = fn($a, $b) => $b ? round($a / $b * 100, 1) . '%' : '–';
 
+// ---- App Store sales (App Store Connect API) ----
+$asc = asc_config();
+$ascErr = $asc ? asc_sync() : '';
+$sales = ['sale' => 0, 'redownload' => 0, 'update' => 0];
+$salesAll = 0; $proceeds = []; $salesDaily = []; $salesCountries = []; $ascSynced = null; $ascFirst = null;
+if ($asc) {
+  asc_tables($db);
+  foreach ($q("SELECT substr(ptype,1,1) AS p, SUM(units) AS u FROM asc_sales WHERE day >= ? GROUP BY 1", [$from]) as $r) {
+    $k = asc_kind($r['p']); if (isset($sales[$k])) $sales[$k] += (int)$r['u'];
+  }
+  foreach ($q("SELECT pcur, SUM(units * proceeds) AS p FROM asc_sales WHERE day >= ? AND substr(ptype,1,1)='1' GROUP BY pcur ORDER BY p DESC", [$from]) as $r)
+    if ($r['pcur'] !== '' && abs((float)$r['p']) > 0.001) $proceeds[$r['pcur']] = (float)$r['p'];
+  foreach ($q("SELECT day, SUM(units) AS u FROM asc_sales WHERE day >= ? AND substr(ptype,1,1)='1' GROUP BY day", [$from]) as $r) $salesDaily[$r['day']] = (int)$r['u'];
+  $salesCountries = $q("SELECT cc, SUM(CASE WHEN substr(ptype,1,1)='1' THEN units ELSE 0 END) AS s,
+      SUM(CASE WHEN substr(ptype,1,1)='3' THEN units ELSE 0 END) AS r,
+      SUM(CASE WHEN substr(ptype,1,1)='1' THEN units * proceeds ELSE 0 END) AS p, MAX(pcur) AS pcur
+    FROM asc_sales WHERE day >= ? GROUP BY cc HAVING s <> 0 OR r <> 0 ORDER BY s DESC, r DESC", [$from]);
+  $salesAll = (int)($q("SELECT SUM(units) AS u FROM asc_sales WHERE substr(ptype,1,1)='1'")[0]['u'] ?? 0);
+  $ascSynced = $q("SELECT v FROM asc_meta WHERE k='synced'")[0]['v'] ?? null;
+  $ascFirst = $q("SELECT MAX(day) AS d FROM asc_days WHERE status='done'")[0]['d'] ?? null;
+}
+$money = function (float $v, string $cur): string {
+  if (class_exists('NumberFormatter')) { $f = new NumberFormatter('en_US', NumberFormatter::CURRENCY); $o = $f->formatCurrency($v, $cur); if ($o !== false) return $o; }
+  return $cur . ' ' . number_format($v, 2);
+};
+
 page_start('aha! analytics'); ?>
 <header>
   <h1>aha! analytics</h1>
@@ -137,6 +164,44 @@ page_start('aha! analytics'); ?>
   <div class="card kpi"><div class="n"><?= $fmt($clicks) ?></div><div class="l">App Store clicks</div></div>
   <div class="card kpi"><div class="n"><?= $pct($clicks, $visitors) ?></div><div class="l">Visitors who clicked download</div></div>
   <div class="card kpi"><div class="n"><?= $fmt($videos) ?></div><div class="l">Video plays with sound</div></div>
+</div>
+
+<div class="card" style="margin-bottom:14px">
+  <h2>App Store sales</h2>
+  <?php if (!$asc): ?>
+    <p class="muted">Not connected yet. Create an App Store Connect API key with the Sales role, then run <code>deploy/set-asc-key.sh</code> from the aha-site folder.</p>
+  <?php else: ?>
+    <?php if ($ascErr): ?><p class="err"><?= $e($ascErr) ?></p><?php endif; ?>
+    <div class="kpis" style="margin:4px 0 10px">
+      <div class="kpi"><div class="n"><?= $fmt($sales['sale']) ?></div><div class="l">Paid downloads</div></div>
+      <div class="kpi"><div class="n" style="font-size:<?= count($proceeds) > 1 ? '22px' : '32px' ?>"><?php
+        if (!$proceeds) echo '–'; else echo implode('<br>', array_map(fn($c, $v) => $e($money($v, $c)), array_keys($proceeds), $proceeds)); ?></div><div class="l">Your proceeds (after Apple's cut)</div></div>
+      <div class="kpi"><div class="n"><?= $fmt($sales['redownload']) ?></div><div class="l">Free re-downloads</div></div>
+      <div class="kpi"><div class="n"><?= $fmt($salesAll) ?></div><div class="l">Paid downloads since launch</div></div>
+    </div>
+    <?php
+      $days2 = []; for ($t = strtotime($from . ' UTC'); $t <= time(); $t += 86400) $days2[] = gmdate('Y-m-d', $t);
+      $smax = max(1, ...array_map(fn($dd) => $salesDaily[$dd] ?? 0, $days2));
+      $W = 1000; $H = 120; $n2 = count($days2); $bw2 = $W / max($n2, 1);
+    ?>
+    <svg viewBox="0 -14 <?= $W ?> <?= $H + 32 ?>" width="100%" role="img" aria-label="Paid downloads per day">
+      <?php foreach ($days2 as $i => $dd): $u = $salesDaily[$dd] ?? 0; $h = max(0, $u) / $smax * $H; $x = $i * $bw2; ?>
+        <rect x="<?= $x + $bw2 * .15 ?>" y="<?= $H - $h ?>" width="<?= $bw2 * .7 ?>" height="<?= $h ?>" rx="2" fill="oklch(0.76 0.16 55)"><title><?= $dd ?>: <?= $u ?> paid downloads</title></rect>
+        <?php if ($u > 0 && $n2 <= 31): ?><text x="<?= $x + $bw2 / 2 ?>" y="<?= $H - $h - 3 ?>" text-anchor="middle"><?= $u ?></text><?php endif; ?>
+        <?php if ($n2 <= 31 || $i % (int)ceil($n2 / 12) === 0): ?><text x="<?= $x + $bw2 / 2 ?>" y="<?= $H + 14 ?>" text-anchor="middle"><?= substr($dd, 5) ?></text><?php endif; ?>
+      <?php endforeach; ?>
+    </svg>
+    <?php if ($salesCountries): ?>
+    <table style="margin-top:8px"><thead><tr><th>Country</th><th class="n">Paid downloads</th><th class="n">Re-downloads</th><th class="n">Proceeds</th></tr></thead><tbody>
+      <?php foreach ($salesCountries as $r): ?>
+        <tr><td><?= $flag($r['cc']) ?> <?= $e($cname($r['cc'])) ?></td><td class="n"><?= $fmt($r['s']) ?></td><td class="n"><?= $fmt($r['r']) ?></td>
+        <td class="n"><?= $r['pcur'] ? $e($money((float)$r['p'], $r['pcur'])) : '–' ?></td></tr>
+      <?php endforeach; ?></tbody></table>
+    <?php endif; ?>
+    <p class="muted" style="margin:10px 0 0">From Apple's daily Sales reports (Pacific time). Each day appears about a day later<?= $ascFirst ? ', latest report: ' . $e($ascFirst) : '' ?>.
+      Proceeds are estimates before tax adjustments; Apple's Payments page shows what is actually paid. Refunds show as negative downloads.
+      <?= $ascSynced ? 'Checked ' . $e(gmdate('M j, H:i', (int)$ascSynced)) . ' UTC.' : '' ?></p>
+  <?php endif; ?>
 </div>
 
 <div class="card">
@@ -179,7 +244,7 @@ page_start('aha! analytics'); ?>
     <?php if (!$devices): ?><tr><td class="muted">No data yet.</td></tr><?php endif; ?></tbody></table></div>
 </div>
 
-<p class="muted" style="margin-top:18px">Times are UTC. "Visitors" counts anonymous daily codes, so one person visiting on 3 days counts 3 times. Your own visits from this browser are not counted. App Store clicks are taps on the download badge, not installs: see App Store Connect → Analytics for installs.
+<p class="muted" style="margin-top:18px">Times are UTC. "Visitors" counts anonymous daily codes, so one person visiting on 3 days counts 3 times. Your own visits from this browser are not counted. App Store clicks are taps on the download badge on this website; App Store sales also include people who found aha! in the App Store directly.
   Country data: <a href="https://db-ip.com">IP Geolocation by DB-IP</a> (CC BY 4.0).</p>
 <script>try{localStorage.setItem('aha_notrack','1')}catch(e){}</script>
 </div></body></html>
