@@ -171,7 +171,7 @@ page_start('aha! analytics'); ?>
   <?php if (!$asc): ?>
     <p class="muted">Not connected yet. Create an App Store Connect API key with the Sales role, then run <code>deploy/set-asc-key.sh</code> from the aha-site folder.</p>
   <?php else: ?>
-    <?php if ($ascErr): ?><p class="err"><?= $e($ascErr) ?></p><?php endif; ?>
+    <?php if ($ascErr): ?><p class="<?= str_starts_with($ascErr, 'Connected') ? 'muted' : 'err' ?>"><?= $e($ascErr) ?></p><?php endif; ?>
     <div class="kpis" style="margin:4px 0 10px">
       <div class="kpi"><div class="n"><?= $fmt($sales['sale']) ?></div><div class="l">Paid downloads</div></div>
       <div class="kpi"><div class="n" style="font-size:<?= count($proceeds) > 1 ? '22px' : '32px' ?>"><?php

@@ -103,6 +103,8 @@ function asc_sync(int $budget = 10): string {
     }
     if ($code !== 200) {
       $msg = json_decode($body, true)['errors'][0]['detail'] ?? ('HTTP ' . $code);
+      if (stripos($msg, 'vendor number') !== false)
+        return 'Connected, waiting for Apple\'s first sales report. Apple calls the vendor number "invalid" until it has produced the first daily report, usually 1-2 days after launch. If this still shows after a few days, check the vendor number in Sales and Trends → Reports.';
       return 'App Store Connect error for ' . $day . ': ' . $msg;
     }
     $tsv = @gzdecode($body);
